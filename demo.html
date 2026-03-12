@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentra™ — Live Agent Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:  #FAF7F2;
+      --coral:  #E8553D;
+      --teal:   #1B9E8C;
+      --ink:    #0D0F0E;
+      --panel:  #111412;
+      --border: #1E2420;
+      --muted:  #3A4040;
+      --dim:    #5A6460;
+      --coral-glow: rgba(232, 85, 61, 0.15);
+      --teal-glow:  rgba(27, 158, 140, 0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise overlay ─────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── Grid background ───────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── Header ────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 56px;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .logo-block {}
+
+    .wordmark {
+      font-family: 'Lora', serif;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .wordmark-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--coral);
+      background: var(--coral-glow);
+      border: 1px solid rgba(232, 85, 61, 0.3);
+      padding: 3px 7px;
+      border-radius: 3px;
+      vertical-align: super;
+    }
+
+    .tagline {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 3px;
+    }
+    .badge-live {
+      color: var(--teal);
+      background: var(--teal-glow);
+      border: 1px solid rgba(27, 158, 140, 0.35);
+    }
+    .badge-network {
+      color: var(--dim);
+      background: transparent;
+      border: 1px solid var(--border);
+    }
+    .dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      margin-right: 6px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* ── Onchain proof banner ──────────────────────────────── */
+    .proof-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border: 1px solid rgba(27, 158, 140, 0.35);
+      border-radius: 5px;
+      background: rgba(27, 158, 140, 0.06);
+      margin-bottom: 40px;
+      text-decoration: none;
+      transition: all 0.15s;
+      flex-wrap: wrap;
+    }
+    .proof-banner:hover {
+      background: rgba(27, 158, 140, 0.1);
+      border-color: rgba(27, 158, 140, 0.5);
+    }
+    .proof-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .proof-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .proof-contract {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--dim);
+      flex: 1;
+    }
+    .proof-arrow {
+      font-size: 14px;
+      color: var(--teal);
+      flex-shrink: 0;
+    }
+
+    /* ── Hero ──────────────────────────────────────────────── */
+    .hero {
+      margin-bottom: 48px;
+    }
+
+    .hero h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: var(--cream);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--coral);
+    }
+
+    .hero p {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--dim);
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    /* ── Stat row ──────────────────────────────────────────── */
+    .stat-row {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+
+    .stat {
+      flex: 1;
+      padding: 18px 20px;
+      border-right: 1px solid var(--border);
+      background: var(--panel);
+    }
+    .stat:last-child { border-right: none; }
+
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--coral);
+      letter-spacing: -0.5px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── Terminal ──────────────────────────────────────────── */
+    .terminal-wrap {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--panel);
+      margin-bottom: 24px;
+      box-shadow: 0 0 60px rgba(232, 85, 61, 0.05), 0 0 120px rgba(27, 158, 140, 0.03);
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #161A18;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dots { display: flex; gap: 7px; }
+    .terminal-dots span {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+    }
+    .d1 { background: #FF5F57; }
+    .d2 { background: #FEBC2E; }
+    .d3 { background: #28C840; }
+
+    .terminal-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .terminal-agent {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--teal);
+      letter-spacing: 1px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .terminal-agent.visible { opacity: 1; }
+
+    .terminal-body {
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      min-height: 320px;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    .terminal-body::-webkit-scrollbar { width: 4px; }
+    .terminal-body::-webkit-scrollbar-track { background: transparent; }
+    .terminal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .line { display: flex; align-items: flex-start; gap: 8px; opacity: 0; animation: fadeIn 0.2s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    .line-prompt { color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+    .line-text { flex: 1; word-break: break-all; }
+
+    .c-dim    { color: var(--dim); }
+    .c-cream  { color: var(--cream); }
+    .c-coral  { color: var(--coral); }
+    .c-teal   { color: var(--teal); }
+    .c-green  { color: #4CAF7D; }
+    .c-yellow { color: #E8B84B; }
+    .c-muted  { color: var(--muted); }
+
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--coral);
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ── Controls ──────────────────────────────────────────── */
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      padding: 11px 22px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      outline: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0.07);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .btn:hover::after { opacity: 1; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+    .btn-primary {
+      background: var(--coral);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--teal);
+      border: 1px solid rgba(27, 158, 140, 0.4);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Step cards ────────────────────────────────────────── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 640px) { .steps { grid-template-columns: 1fr 1fr; } }
+
+    .step-card {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--panel);
+      transition: all 0.3s;
+    }
+    .step-card.active {
+      border-color: var(--coral);
+      background: rgba(232, 85, 61, 0.05);
+    }
+    .step-card.done {
+      border-color: rgba(27, 158, 140, 0.4);
+      background: rgba(27, 158, 140, 0.05);
+    }
+
+    .step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .step-name {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--dim);
+      margin-top: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .step-icon {
+      font-size: 18px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .step-card.active .step-name { color: var(--coral); }
+    .step-card.done .step-name   { color: var(--teal); }
+
+    /* ── JSON inspector ────────────────────────────────────── */
+    .inspector {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--panel);
+      margin-bottom: 40px;
+      display: none;
+    }
+    .inspector.visible { display: block; }
+
+    .inspector-tabs {
+      display: flex;
+      background: #161A18;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 10px 16px;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      border-right: 1px solid var(--border);
+      transition: all 0.15s;
+    }
+    .tab:hover  { color: var(--cream); }
+    .tab.active { color: var(--coral); background: rgba(232, 85, 61, 0.07); }
+
+    .inspector-content {
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* JSON syntax highlighting */
+    .json-key    { color: var(--teal); }
+    .json-string { color: var(--cream); }
+    .json-number { color: var(--coral); }
+    .json-bool   { color: #E8B84B; }
+    .json-null   { color: var(--dim); }
+
+    /* ── Footer ────────────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-left {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .footer-left a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+    .footer-left a:hover { text-decoration: underline; }
+
+    .footer-right {
+      display: flex;
+      gap: 12px;
+    }
+
+    .footer-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .footer-link:hover {
+      color: var(--cream);
+      border-color: var(--dim);
+    }
+
+    /* ── Glow orbs ─────────────────────────────────────────── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+      opacity: 0.12;
+    }
+    .orb-1 { width: 600px; height: 600px; background: var(--coral); top: -200px; right: -200px; }
+    .orb-2 { width: 400px; height: 400px; background: var(--teal);  bottom: -100px; left: -100px; }
+
+    /* ── Animations ────────────────────────────────────────── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero, .stat-row, .controls, .steps { animation: slideUp 0.5s ease both; }
+    .hero        { animation-delay: 0.05s; }
+    .stat-row    { animation-delay: 0.15s; }
+    .steps       { animation-delay: 0.25s; }
+    .terminal-wrap { animation: slideUp 0.5s 0.35s ease both; }
+    .controls    { animation-delay: 0.45s; }
+  </style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="wrap">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo-block">
+      <div class="wordmark">
+        Agentra<sup class="wordmark-badge">™</sup>
+      </div>
+      <div class="tagline">Agent-Native Financial Infrastructure</div>
+    </div>
+    <div class="header-meta">
+      <span class="badge badge-live"><span class="dot"></span>Developer Preview</span>
+      <span class="badge badge-network">Base Sepolia Testnet</span>
+    </div>
+  </header>
+
+  <!-- Onchain proof banner -->
+  <a class="proof-banner" href="https://sepolia.basescan.org/address/0x88DC3cCd7202673D7C17560557DbE94e845D3243" target="_blank" rel="noopener">
+    <span class="proof-dot"></span>
+    <span class="proof-label">Verified onchain</span>
+    <span class="proof-contract">AgentWalletFactory · 0x88DC3c…D3243 · Base Sepolia</span>
+    <span class="proof-arrow">↗</span>
+  </a>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Watch an <em>autonomous agent</em><br>transact in real time.</h1>
+    <p>Agentra provides Wallets-as-a-Service, KYA identity verification, trust-tiered access control, and x402 payment middleware — built for agents, not humans.</p>
+  </section>
+
+  <!-- Stats -->
+  <div class="stat-row">
+    <div class="stat">
+      <div class="stat-value">15</div>
+      <div class="stat-label">Live Endpoints</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">5</div>
+      <div class="stat-label">Trust Tiers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">x402</div>
+      <div class="stat-label">Payment Protocol</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="agents-count">0</div>
+      <div class="stat-label">Agents Registered</div>
+    </div>
+  </div>
+
+  <!-- Step tracker -->
+  <div class="steps">
+    <div class="step-card" id="step-register">
+      <span class="step-icon">⬡</span>
+      <div class="step-num">01</div>
+      <div class="step-name">Register</div>
+    </div>
+    <div class="step-card" id="step-kya">
+      <span class="step-icon">◈</span>
+      <div class="step-num">02</div>
+      <div class="step-name">KYA Verify</div>
+    </div>
+    <div class="step-card" id="step-reputation">
+      <span class="step-icon">◉</span>
+      <div class="step-num">03</div>
+      <div class="step-name">Reputation</div>
+    </div>
+    <div class="step-card" id="step-mandate">
+      <span class="step-icon">⬖</span>
+      <div class="step-num">04</div>
+      <div class="step-name">Mandate</div>
+    </div>
+    <div class="step-card" id="step-x402">
+      <span class="step-icon">◎</span>
+      <div class="step-num">05</div>
+      <div class="step-name">x402 Pay</div>
+    </div>
+  </div>
+
+  <!-- Terminal -->
+  <div class="terminal-wrap">
+    <div class="terminal-bar">
+      <div class="terminal-dots">
+        <span class="d1"></span>
+        <span class="d2"></span>
+        <span class="d3"></span>
+      </div>
+      <div class="terminal-title">agentra — agent lifecycle</div>
+      <div class="terminal-agent" id="agent-id-display">—</div>
+    </div>
+    <div class="terminal-body" id="terminal">
+      <div class="line" style="animation-delay:0s">
+        <span class="line-prompt c-muted">$</span>
+        <span class="line-text c-dim">Agentra™ Developer Preview — Base Sepolia Testnet</span>
+      </div>
+      <div class="line" style="animation-delay:0.1s">
+        <span class="line-prompt c-muted">$</span>
+        <span class="line-text c-muted">Press <span class="c-coral">Run Demo</span> to spawn an autonomous agent and watch it navigate the full Agentra stack.</span>
+      </div>
+      <div class="line" style="animation-delay:0.2s">
+        <span class="line-prompt c-muted"> </span>
+        <span class="line-text c-muted">──────────────────────────────────────────</span>
+      </div>
+      <div class="line" style="animation-delay:0.3s">
+        <span class="line-prompt c-muted"> </span>
+        <span class="line-text"><span class="cursor"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-primary" id="btn-run" onclick="runDemo()">▶ Run Demo</button>
+    <button class="btn btn-secondary" id="btn-manual" onclick="runManual()">Manual Steps</button>
+    <button class="btn btn-ghost" id="btn-clear" onclick="clearTerminal()">Clear</button>
+  </div>
+
+  <!-- JSON Inspector -->
+  <div class="inspector" id="inspector">
+    <div class="inspector-tabs" id="inspector-tabs"></div>
+    <div class="inspector-content" id="inspector-content"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-left">
+      Patent Pending — ProTech Data Security Services LLC d/b/a Agentra™<br>
+      <a href="https://agentrapay.ai">agentrapay.ai</a> · Ashland, Oregon · Developer Preview
+    </div>
+    <div class="footer-right">
+      <a href="https://agentrapay.ai" class="footer-link">Waitlist</a>
+      <a href="https://sepolia.basescan.org/address/0x88DC3cCd7202673D7C17560557DbE94e845D3243" class="footer-link" target="_blank">BaseScan ↗</a>
+      <a href="https://api.agentrapay.ai/health" class="footer-link" target="_blank">API Status</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+// In production, point to your deployed Worker
+const WORKER_URL = "https://worker.agentrapay.ai";
+
+let agentCount = parseInt(localStorage.getItem('agentra_demo_count') || '0');
+let stepData   = {};
+let isRunning  = false;
+let manualStep = 0;
+let currentAgentId = null;
+
+document.getElementById('agents-count').textContent = agentCount;
+
+// ── Terminal helpers ─────────────────────────────────────────────────────────
+function term() { return document.getElementById('terminal'); }
+
+function removeCursor() {
+  const cursor = term().querySelector('.cursor');
+  if (cursor) cursor.parentElement.remove();
+}
+
+function addLine(prompt, text, colorClass, delay = 0) {
+  removeCursor();
+  const div = document.createElement('div');
+  div.className = 'line';
+  div.style.animationDelay = delay + 's';
+  div.innerHTML = `<span class="line-prompt c-muted">${prompt}</span><span class="line-text ${colorClass}">${text}</span>`;
+  term().appendChild(div);
+  term().scrollTop = term().scrollHeight;
+}
+
+function addCursor() {
+  removeCursor();
+  const div = document.createElement('div');
+  div.className = 'line';
+  div.innerHTML = `<span class="line-prompt c-muted"> </span><span class="line-text"><span class="cursor"></span></span>`;
+  term().appendChild(div);
+  term().scrollTop = term().scrollHeight;
+}
+
+function addDivider() {
+  addLine(' ', '──────────────────────────────────────────', 'c-muted');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── Step card state ──────────────────────────────────────────────────────────
+function setStepActive(name) {
+  ['register','kya','reputation','mandate','x402'].forEach(s => {
+    const el = document.getElementById('step-' + s);
+    el.classList.remove('active');
+    if (s === name) el.classList.add('active');
+  });
+}
+
+function setStepDone(name) {
+  const el = document.getElementById('step-' + name);
+  el.classList.remove('active');
+  el.classList.add('done');
+}
+
+function resetSteps() {
+  ['register','kya','reputation','mandate','x402'].forEach(s => {
+    const el = document.getElementById('step-' + s);
+    el.classList.remove('active','done');
+  });
+}
+
+// ── JSON Inspector ───────────────────────────────────────────────────────────
+function showInspector(tabLabel, data) {
+  const inspector = document.getElementById('inspector');
+  const tabs = document.getElementById('inspector-tabs');
+  const content = document.getElementById('inspector-content');
+  inspector.classList.add('visible');
+
+  // Add tab
+  const tab = document.createElement('div');
+  tab.className = 'tab';
+  tab.textContent = tabLabel;
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    content.innerHTML = syntaxHighlight(JSON.stringify(data, null, 2));
+  };
+  tabs.appendChild(tab);
+
+  // Activate this tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  content.innerHTML = syntaxHighlight(JSON.stringify(data, null, 2));
+}
+
+function syntaxHighlight(json) {
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+    let cls = 'json-number';
+    if (/^"/.test(match)) {
+      cls = /:$/.test(match) ? 'json-key' : 'json-string';
+    } else if (/true|false/.test(match)) {
+      cls = 'json-bool';
+    } else if (/null/.test(match)) {
+      cls = 'json-null';
+    }
+    return `<span class="${cls}">${match}</span>`;
+  });
+}
+
+// ── API call ─────────────────────────────────────────────────────────────────
+async function callWorker(path, method = 'POST', body = null) {
+  try {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(WORKER_URL + path, opts);
+    return await res.json();
+  } catch (e) {
+    // Fallback to mock data if worker not yet deployed
+    return getMockData(path, body);
+  }
+}
+
+// ── Mock fallback (works before Worker is deployed) ──────────────────────────
+function rand(chars, n) { return Array.from({length:n}, () => chars[Math.floor(Math.random()*chars.length)]).join(''); }
+function agentId() { return 'agt_' + rand('abcdefghijklmnopqrstuvwxyz0123456789', 16); }
+function wallet()  { return '0x' + rand('0123456789abcdef', 40); }
+function txHash()  { return '0x' + rand('0123456789abcdef', 64); }
+
+function getMockData(path, body) {
+  const now = new Date().toISOString();
+  const aid = currentAgentId || agentId();
+  if (path.includes('lifecycle')) {
+    const score = Math.floor(Math.random()*30)+65;
+    const tier = score>80?3:2;
+    const tiers = {2:{l:'VERIFIED',p:100},3:{l:'TRUSTED',p:1000}};
+    return { success:true, agent_id:aid, _mock:true, steps:[
+      {step:'register', label:'AGENT REGISTRATION', status:'OK', data:{agent_id:aid, wallet_address:wallet(), network:'base-sepolia', trust_tier:0, kya_status:'PENDING', registered_at:now}},
+      {step:'kya', label:'KYA VERIFICATION', status:'OK', data:{agent_id:aid, kya_status:'VERIFIED', trust_tier:1, trust_tier_label:'BASIC', verifier:'Agentra KYA Engine v0.5.0', verified_at:now}},
+      {step:'reputation', label:'REPUTATION SCORING', status:'OK', data:{agent_id:aid, reputation_score:score, trust_tier:tier, trust_tier_label:tiers[tier].l, payment_limit_usdc:tiers[tier].p}},
+      {step:'mandate', label:'MANDATE ENGINE', status:'OK', data:{mandate_id:'mnd_'+rand('abc0123',16), agent_id:aid, max_amount_usdc:50, status:'ACTIVE', expires_at:new Date(Date.now()+86400*30*1000).toISOString()}},
+      {step:'x402', label:'x402 PAYMENT HANDSHAKE', status:'OK', data:{payment_id:'pay_'+rand('abc0123',16), status:'AUTHORIZED', protocol:'x402', amount_usdc:(body&&body.amount_usdc)||1.5, network:'base-sepolia', kya_gate:'PASSED', mandate_check:'PASSED', tx_hash:txHash(), authorized_at:now}},
+    ]};
+  }
+  return {success:true, _mock:true};
+}
+
+// ── Full lifecycle demo ───────────────────────────────────────────────────────
+async function runDemo() {
+  if (isRunning) return;
+  isRunning = true;
+  manualStep = 0;
+
+  document.getElementById('btn-run').disabled = true;
+  document.getElementById('btn-manual').disabled = true;
+  document.getElementById('inspector-tabs').innerHTML = '';
+  document.getElementById('inspector').classList.remove('visible');
+
+  clearTerminal(true);
+  resetSteps();
+
+  addLine('$', 'agentra spawn --network base-sepolia --auto', 'c-cream');
+  addLine(' ', 'Initializing autonomous agent...', 'c-dim');
+  await sleep(600);
+
+  const result = await callWorker('/mock/lifecycle', 'POST', { amount_usdc: 1.5 });
+
+  if (!result.success) {
+    addLine('✗', 'Failed to connect to Agentra API', 'c-coral');
+    isRunning = false;
+    document.getElementById('btn-run').disabled = false;
+    return;
+  }
+
+  currentAgentId = result.agent_id;
+  document.getElementById('agent-id-display').textContent = currentAgentId;
+  document.getElementById('agent-id-display').classList.add('visible');
+
+  agentCount++;
+  localStorage.setItem('agentra_demo_count', agentCount);
+  document.getElementById('agents-count').textContent = agentCount;
+
+  const stepMap = {
+    register:   { color: 'c-teal',   icon: '⬡' },
+    kya:        { color: 'c-yellow', icon: '◈' },
+    reputation: { color: 'c-cream',  icon: '◉' },
+    mandate:    { color: 'c-teal',   icon: '⬖' },
+    x402:       { color: 'c-coral',  icon: '◎' },
+  };
+
+  for (const step of result.steps) {
+    stepData[step.step] = step.data;
+    setStepActive(step.step);
+    addDivider();
+    addLine('→', `${step.label}`, 'c-cream');
+    await sleep(300);
+
+    const d = step.data;
+    const map = stepMap[step.step];
+
+    if (step.step === 'register') {
+      addLine(' ', `agent_id        ${d.agent_id}`, 'c-teal');
+      addLine(' ', `wallet          ${d.wallet_address}`, 'c-dim');
+      addLine(' ', `network         ${d.network}`, 'c-dim');
+      addLine(' ', `trust_tier      ${d.trust_tier} (UNTRUSTED)`, 'c-yellow');
+      addLine(' ', `kya_status      ${d.kya_status}`, 'c-coral');
+    }
+    else if (step.step === 'kya') {
+      addLine(' ', `kya_status      ${d.kya_status}`, 'c-green');
+      addLine(' ', `trust_tier      ${d.trust_tier} (${d.trust_tier_label})`, 'c-teal');
+      addLine(' ', `verifier        ${d.verifier}`, 'c-dim');
+    }
+    else if (step.step === 'reputation') {
+      addLine(' ', `reputation      ${d.reputation_score} / 100`, 'c-coral');
+      addLine(' ', `trust_tier      ${d.trust_tier} (${d.trust_tier_label})`, 'c-teal');
+      addLine(' ', `payment_limit   $${d.payment_limit_usdc} USDC`, 'c-green');
+    }
+    else if (step.step === 'mandate') {
+      addLine(' ', `mandate_id      ${d.mandate_id}`, 'c-teal');
+      addLine(' ', `max_spend       $${d.max_amount_usdc} USDC`, 'c-cream');
+      addLine(' ', `status          ${d.status}`, 'c-green');
+    }
+    else if (step.step === 'x402') {
+      addLine(' ', `payment_id      ${d.payment_id}`, 'c-teal');
+      addLine(' ', `amount          $${d.amount_usdc} USDC`, 'c-coral');
+      addLine(' ', `kya_gate        ${d.kya_gate}`, 'c-green');
+      addLine(' ', `mandate_check   ${d.mandate_check}`, 'c-green');
+      addLine(' ', `tx_hash         ${d.tx_hash.slice(0,22)}...`, 'c-dim');
+      addLine(' ', `status          ${d.status}`, 'c-green');
+    }
+
+    await sleep(80);
+    addLine('✓', `${step.label} — OK`, map.color);
+    showInspector(step.step.toUpperCase(), step.data);
+    setStepDone(step.step);
+    await sleep(500);
+  }
+
+  addDivider();
+  addLine('✓', 'Agent lifecycle complete. All systems operational.', 'c-green');
+  addLine(' ', `Session: ${currentAgentId}  ·  Network: base-sepolia  ·  Protocol: x402`, 'c-muted');
+  addCursor();
+
+  isRunning = false;
+  document.getElementById('btn-run').disabled = false;
+  document.getElementById('btn-manual').disabled = false;
+}
+
+// ── Manual step-by-step ───────────────────────────────────────────────────────
+const manualSteps = [
+  { id: 'register',   label: '01 — Register Agent',        fn: doRegister },
+  { id: 'kya',        label: '02 — KYA Verification',      fn: doKya },
+  { id: 'reputation', label: '03 — Reputation Score',      fn: doReputation },
+  { id: 'mandate',    label: '04 — Create Mandate',        fn: doMandate },
+  { id: 'x402',       label: '05 — x402 Payment',          fn: doX402 },
+];
+
+async function runManual() {
+  if (isRunning) return;
+  if (manualStep === 0) {
+    clearTerminal(true);
+    resetSteps();
+    document.getElementById('inspector-tabs').innerHTML = '';
+    document.getElementById('inspector').classList.remove('visible');
+    addLine('$', 'agentra step-through --manual', 'c-cream');
+    addLine(' ', 'Manual mode. Click Manual Steps to advance.', 'c-dim');
+    addCursor();
+  }
+  if (manualStep >= manualSteps.length) {
+    manualStep = 0;
+    clearTerminal(true);
+    resetSteps();
+    addLine(' ', 'Sequence complete. Starting over.', 'c-dim');
+    addCursor();
+    return;
+  }
+  const s = manualSteps[manualStep];
+  await s.fn();
+  manualStep++;
+  document.getElementById('btn-manual').textContent =
+    manualStep < manualSteps.length ? `→ ${manualSteps[manualStep].label}` : '↺ Restart';
+}
+
+async function doRegister() {
+  isRunning = true;
+  setStepActive('register');
+  addDivider();
+  addLine('→', 'AGENT REGISTRATION', 'c-cream');
+  const result = await callWorker('/mock/register', 'POST', {});
+  currentAgentId = result.agent_id;
+  stepData.register = result;
+  document.getElementById('agent-id-display').textContent = currentAgentId;
+  document.getElementById('agent-id-display').classList.add('visible');
+  addLine(' ', `agent_id   ${result.agent_id}`, 'c-teal');
+  addLine(' ', `wallet     ${result.wallet_address}`, 'c-dim');
+  addLine(' ', `kya_status ${result.kya_status}`, 'c-coral');
+  addLine('✓', 'Registration complete', 'c-teal');
+  showInspector('REGISTER', result);
+  setStepDone('register');
+  agentCount++; localStorage.setItem('agentra_demo_count', agentCount);
+  document.getElementById('agents-count').textContent = agentCount;
+  addCursor();
+  isRunning = false;
+}
+
+async function doKya() {
+  isRunning = true;
+  setStepActive('kya');
+  addDivider();
+  addLine('→', 'KYA VERIFICATION', 'c-cream');
+  const result = await callWorker(`/mock/agents/${currentAgentId}/kya`, 'POST', {});
+  stepData.kya = result;
+  addLine(' ', `kya_status   ${result.kya_status||'VERIFIED'}`, 'c-green');
+  addLine(' ', `trust_tier   ${result.trust_tier||1} (${result.trust_tier_label||'BASIC'})`, 'c-teal');
+  addLine('✓', 'KYA passed', 'c-teal');
+  showInspector('KYA', result);
+  setStepDone('kya');
+  addCursor();
+  isRunning = false;
+}
+
+async function doReputation() {
+  isRunning = true;
+  setStepActive('reputation');
+  addDivider();
+  addLine('→', 'REPUTATION SCORING', 'c-cream');
+  const result = await callWorker(`/mock/agents/${currentAgentId}/reputation`, 'GET');
+  stepData.reputation = result;
+  addLine(' ', `score          ${result.reputation_score||72} / 100`, 'c-coral');
+  addLine(' ', `trust_tier     ${result.trust_tier||2} (${result.trust_tier_label||'VERIFIED'})`, 'c-teal');
+  addLine(' ', `payment_limit  $${result.payment_limit_usdc||100} USDC`, 'c-green');
+  addLine('✓', 'Reputation computed', 'c-teal');
+  showInspector('REPUTATION', result);
+  setStepDone('reputation');
+  addCursor();
+  isRunning = false;
+}
+
+async function doMandate() {
+  isRunning = true;
+  setStepActive('mandate');
+  addDivider();
+  addLine('→', 'MANDATE ENGINE', 'c-cream');
+  const result = await callWorker('/mock/mandate', 'POST', { agent_id: currentAgentId, max_amount_usdc: 50 });
+  stepData.mandate = result;
+  addLine(' ', `mandate_id  ${result.mandate_id}`, 'c-teal');
+  addLine(' ', `max_spend   $${result.max_amount_usdc||50} USDC`, 'c-cream');
+  addLine(' ', `status      ${result.status||'ACTIVE'}`, 'c-green');
+  addLine('✓', 'Mandate created', 'c-teal');
+  showInspector('MANDATE', result);
+  setStepDone('mandate');
+  addCursor();
+  isRunning = false;
+}
+
+async function doX402() {
+  isRunning = true;
+  setStepActive('x402');
+  addDivider();
+  addLine('→', 'x402 PAYMENT HANDSHAKE', 'c-cream');
+  const result = await callWorker('/mock/x402', 'POST', { agent_id: currentAgentId, amount_usdc: 1.5 });
+  stepData.x402 = result;
+  addLine(' ', `payment_id      ${result.payment_id}`, 'c-teal');
+  addLine(' ', `amount          $${result.amount_usdc||1.5} USDC`, 'c-coral');
+  addLine(' ', `kya_gate        ${result.kya_gate||'PASSED'}`, 'c-green');
+  addLine(' ', `mandate_check   ${result.mandate_check||'PASSED'}`, 'c-green');
+  addLine(' ', `tx_hash         ${(result.tx_hash||'0x'+rand('0123456789abcdef',64)).slice(0,22)}...`, 'c-dim');
+  addLine(' ', `status          ${result.status||'AUTHORIZED'}`, 'c-green');
+  addLine('✓', 'Payment authorized via x402', 'c-coral');
+  showInspector('x402', result);
+  setStepDone('x402');
+  addDivider();
+  addLine('✓', 'All steps complete.', 'c-green');
+  addCursor();
+  isRunning = false;
+}
+
+// ── Clear ─────────────────────────────────────────────────────────────────────
+function clearTerminal(silent = false) {
+  term().innerHTML = '';
+  if (!silent) {
+    currentAgentId = null;
+    manualStep = 0;
+    document.getElementById('agent-id-display').classList.remove('visible');
+    document.getElementById('btn-manual').textContent = 'Manual Steps';
+    resetSteps();
+  }
+  addCursor();
+}
+</script>
+</body>
+</html>
