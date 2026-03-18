@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agentra™ — The Agentic Economy</title>
+<meta name="description" content="The agentic economy is projected to mediate $3-5 trillion in global commerce by 2030. See why trust infrastructure is the missing layer."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,700;1,400&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1A1A2E;--navy-deep:#0E0E1F;--navy-mid:#16162b;
+  --coral:#E8553D;--coral-soft:#F07A66;--teal:#1B9E8C;--teal-bright:#2CC4AE;
+  --cream:#FAF7F2;--cream-dim:rgba(250,247,242,0.55);--cream-faint:rgba(250,247,242,0.10);
+  --gold:#E8B93D;
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy-deep);color:var(--cream);font-family:'Outfit',sans-serif;overflow-x:hidden}
+::selection{background:var(--teal);color:var(--navy-deep)}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--navy-deep)}
+::-webkit-scrollbar-thumb{background:rgba(250,247,242,0.08);border-radius:4px}
+
+/* Animations */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes growBar{from{width:0}to{width:var(--w)}}
+@keyframes drawLine{from{stroke-dashoffset:2000}to{stroke-dashoffset:0}}
+@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
+@keyframes starTwinkle{0%,100%{opacity:0.1}50%{opacity:0.5}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(27,158,140,0.1)}50%{box-shadow:0 0 40px rgba(27,158,140,0.25)}}
+
+.reveal{opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.4,0,0.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-30px);transition:all 0.8s cubic-bezier(0.4,0,0.2,1)}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(30px);transition:all 0.8s cubic-bezier(0.4,0,0.2,1)}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+
+/* Stars */
+.star{position:fixed;border-radius:50%;background:var(--cream);pointer-events:none;animation:starTwinkle var(--d) ease-in-out var(--delay) infinite}
+
+/* Ambient orbs */
+.orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(80px)}
+
+/* Sections */
+section{position:relative;padding:100px 0;overflow:hidden}
+.container{max-width:1000px;margin:0 auto;padding:0 32px}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center}
+.hero-eyebrow{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal-bright);margin-bottom:24px;font-weight:400;animation:fadeIn 1s 0.2s both}
+.hero h1{font-family:'Lora',serif;font-size:clamp(42px,6vw,72px);font-weight:700;line-height:1.1;margin-bottom:24px;animation:fadeInUp 1s 0.4s both}
+.hero h1 em{font-style:italic;color:var(--teal-bright)}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:var(--cream-dim);max-width:640px;margin:0 auto 40px;line-height:1.6;font-weight:300;animation:fadeInUp 1s 0.6s both}
+.hero-stat-row{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;animation:fadeInUp 1s 0.8s both}
+.hero-stat{text-align:center}
+.hero-stat .num{font-family:'JetBrains Mono',monospace;font-size:clamp(36px,5vw,56px);font-weight:600;line-height:1;margin-bottom:4px}
+.hero-stat .label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--cream-dim);font-weight:300}
+.hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--cream-dim);animation:pulse 2s ease-in-out infinite}
+
+/* Section titles */
+.section-eyebrow{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--teal-bright);margin-bottom:12px;font-weight:400}
+.section-title{font-family:'Lora',serif;font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.15;margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--cream-dim);line-height:1.7;font-weight:300;max-width:600px}
+
+/* Growth chart */
+.chart-wrap{position:relative;margin:48px 0;padding:32px;border-radius:16px;background:rgba(250,247,242,0.02);border:1px solid var(--cream-faint)}
+.chart-label{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--cream-dim);font-weight:300}
+.chart-title{font-family:'Lora',serif;font-size:20px;font-weight:700;margin:4px 0 24px}
+
+/* Bar chart */
+.bar-row{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.bar-year{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream-dim);width:44px;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:32px;background:rgba(250,247,242,0.03);border-radius:6px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:12px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--navy-deep);transition:width 1.5s cubic-bezier(0.4,0,0.2,1);width:0}
+.bar-fill.animated{width:var(--w)}
+
+/* Big number cards */
+.big-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:48px 0}
+.big-card{padding:28px 24px;border-radius:14px;background:rgba(250,247,242,0.03);border:1px solid var(--cream-faint);transition:all 0.3s ease}
+.big-card:hover{background:rgba(250,247,242,0.06);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+.big-card .num{font-family:'JetBrains Mono',monospace;font-size:clamp(28px,4vw,40px);font-weight:700;line-height:1;margin-bottom:6px}
+.big-card .label{font-size:11px;color:var(--cream-dim);line-height:1.5;font-weight:300}
+
+/* Timeline */
+.timeline{position:relative;padding-left:32px;margin:48px 0}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--teal),var(--cream-faint))}
+.tl-item{position:relative;margin-bottom:36px}
+.tl-item::before{content:'';position:absolute;left:-28px;top:6px;width:12px;height:12px;border-radius:50%;border:2px solid var(--teal);background:var(--navy-deep)}
+.tl-item.active::before{background:var(--teal);box-shadow:0 0 12px var(--teal)}
+.tl-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal-bright);margin-bottom:4px;letter-spacing:0.05em}
+.tl-title{font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;margin-bottom:4px}
+.tl-desc{font-size:13px;color:var(--cream-dim);font-weight:300;line-height:1.6}
+
+/* Quote block */
+.quote-block{margin:48px 0;padding:32px 40px;border-left:3px solid var(--teal);background:rgba(27,158,140,0.04);border-radius:0 12px 12px 0}
+.quote-text{font-family:'Lora',serif;font-size:18px;font-style:italic;line-height:1.7;margin-bottom:12px}
+.quote-attr{font-size:12px;color:var(--cream-dim);font-weight:300}
+
+/* Trust gap section */
+.gap-visual{display:flex;align-items:center;gap:24px;margin:48px 0;flex-wrap:wrap}
+.gap-side{flex:1;min-width:200px;padding:24px;border-radius:12px;text-align:center}
+.gap-side .num{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;line-height:1;margin-bottom:8px}
+.gap-side .label{font-size:12px;color:var(--cream-dim);font-weight:300;line-height:1.5}
+.gap-arrow{font-size:28px;color:var(--cream-faint);flex-shrink:0}
+
+/* CTA */
+.cta-section{text-align:center;padding:80px 0 60px}
+.cta-btn{display:inline-block;padding:14px 40px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--teal-bright));color:var(--navy-deep);font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.06em;text-decoration:none;transition:all 0.3s ease;animation:glowPulse 3s ease-in-out infinite}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(27,158,140,0.3)}
+
+/* Source */
+.source{font-size:9px;color:rgba(250,247,242,0.25);letter-spacing:0.05em;margin-top:8px;font-family:'JetBrains Mono',monospace}
+
+/* Footer */
+footer{text-align:center;padding:24px;font-size:8px;color:var(--cream-dim);opacity:0.3;letter-spacing:0.16em}
+
+/* Sector grid */
+.sector-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:40px 0}
+.sector-card{padding:20px 16px;border-radius:10px;background:rgba(250,247,242,0.02);border:1px solid var(--cream-faint);transition:all 0.3s ease}
+.sector-card:hover{background:rgba(250,247,242,0.05);border-color:var(--teal);transform:translateY(-2px)}
+.sector-icon{font-size:22px;margin-bottom:8px}
+.sector-name{font-size:13px;font-weight:600;margin-bottom:4px}
+.sector-stat{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal-bright)}
+
+/* Divider */
+.divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent);margin:0 auto}
+
+@media(max-width:640px){
+  .hero-stat-row{gap:24px}
+  .gap-visual{flex-direction:column}
+  .gap-arrow{transform:rotate(90deg)}
+  .sector-grid{grid-template-columns:1fr 1fr}
+  .big-cards{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Ambient -->
+<div class="orb" style="width:500px;height:500px;top:-10%;left:-8%;background:radial-gradient(circle,rgba(27,158,140,0.06),transparent 70%)"></div>
+<div class="orb" style="width:400px;height:400px;bottom:20%;right:-5%;background:radial-gradient(circle,rgba(232,85,61,0.04),transparent 70%)"></div>
+<div class="orb" style="width:300px;height:300px;top:50%;left:40%;background:radial-gradient(circle,rgba(232,185,61,0.02),transparent 70%)"></div>
+
+<!-- Stars generated by JS -->
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">The Agentic Economy</div>
+    <h1>Agents Will Mediate<br/><em>$3-5 Trillion</em><br/>by 2030</h1>
+    <p class="hero-sub">Autonomous AI agents are entering every sector of the global economy. They negotiate, transact, and settle without human intervention. The infrastructure to trust them does not yet exist.</p>
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <div class="num" style="color:var(--teal-bright)" data-count="47">$0B</div>
+        <div class="label">Agentic AI Market 2030</div>
+        <div class="source">Capgemini, 2025</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" style="color:var(--coral)" data-count="131">$0B</div>
+        <div class="label">E-Commerce Fraud 2030</div>
+        <div class="source">Industry Forecast</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" style="color:var(--gold)" data-count="29">0%</div>
+        <div class="label">Consumer Trust in AI Payments</div>
+        <div class="source">UK Consumer Survey, 2025</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll to explore ↓</div>
+</section>
+
+<!-- ═══════ EXPLOSIVE GROWTH ═══════ -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">Market Trajectory</div>
+      <div class="section-title">Faster Than the Generative AI Boom</div>
+      <p class="section-sub">Agentic AI is outpacing traditional generative AI at comparable market stages. The 5-year CAGR for agentic AI reaches 175%, nearly double generative AI's 90% over the same window.</p>
+      <div class="source" style="margin-top:8px">Omdia Enterprise Agentic AI Software Market Forecast, Sept 2025</div>
+    </div>
+
+    <div class="chart-wrap reveal">
+      <div class="chart-label">Agentic AI Market Size (USD Billions)</div>
+      <div class="chart-title">The Steepest Curve in Enterprise Tech</div>
+      <div class="bar-row"><span class="bar-year">2024</span><div class="bar-track"><div class="bar-fill" style="--w:4%;background:linear-gradient(90deg,var(--teal),var(--teal-bright))">$5.1B</div></div></div>
+      <div class="bar-row"><span class="bar-year">2025</span><div class="bar-track"><div class="bar-fill" style="--w:8%;background:linear-gradient(90deg,var(--teal),var(--teal-bright))">$7.5B</div></div></div>
+      <div class="bar-row"><span class="bar-year">2026</span><div class="bar-track"><div class="bar-fill" style="--w:13%;background:linear-gradient(90deg,var(--teal),var(--teal-bright))">$10.9B</div></div></div>
+      <div class="bar-row"><span class="bar-year">2028</span><div class="bar-track"><div class="bar-fill" style="--w:30%;background:linear-gradient(90deg,var(--teal),var(--teal-bright))">$25B</div></div></div>
+      <div class="bar-row"><span class="bar-year">2030</span><div class="bar-track"><div class="bar-fill" style="--w:55%;background:linear-gradient(90deg,var(--teal),var(--teal-bright))">$47B</div></div></div>
+      <div class="bar-row"><span class="bar-year">2034</span><div class="bar-track"><div class="bar-fill" style="--w:100%;background:linear-gradient(90deg,var(--coral),var(--coral-soft))">$199B</div></div></div>
+      <div class="source">Sources: Capgemini, Precedence Research, MarketsandMarkets</div>
+    </div>
+
+    <div class="big-cards">
+      <div class="big-card reveal">
+        <div class="num" style="color:var(--teal-bright)">44%</div>
+        <div class="label">CAGR through 2034<br/><span class="source">Precedence Research</span></div>
+      </div>
+      <div class="big-card reveal" style="transition-delay:0.1s">
+        <div class="num" style="color:var(--gold)">175%</div>
+        <div class="label">5-Year CAGR vs. GenAI's 90%<br/><span class="source">Omdia, Sept 2025</span></div>
+      </div>
+      <div class="big-card reveal" style="transition-delay:0.2s">
+        <div class="num" style="color:var(--coral)">31%</div>
+        <div class="label">Share of GenAI market by 2030<br/><span class="source">Omdia, Sept 2025</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ COMMERCE SCALE ═══════ -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">Economic Impact</div>
+      <div class="section-title">The Trillion-Dollar Transaction Layer</div>
+      <p class="section-sub">AI agents are projected to handle 15-25% of all US e-commerce by 2030. Globally, agentic commerce could orchestrate trillions in annual transaction volume.</p>
+    </div>
+
+    <div class="big-cards">
+      <div class="big-card reveal">
+        <div class="num" style="color:var(--teal-bright)">$3B</div>
+        <div class="label">Agent transaction volume, 2025<br/><span class="source">Visa / Bain Estimates</span></div>
+      </div>
+      <div class="big-card reveal" style="transition-delay:0.1s">
+        <div class="num" style="color:var(--gold)">$500B</div>
+        <div class="label">Projected US agent commerce, 2030<br/><span class="source">Bain & Company</span></div>
+      </div>
+      <div class="big-card reveal" style="transition-delay:0.2s">
+        <div class="num" style="color:var(--coral-soft)">$5T</div>
+        <div class="label">Global agentic commerce, 2030<br/><span class="source">McKinsey</span></div>
+      </div>
+    </div>
+
+    <div class="quote-block reveal">
+      <div class="quote-text">"Three to five years from now, one can reasonably expect that there will be billions, literally billions of AI agents conducting economic activity in the world on a continuous basis. They need a financial system."</div>
+      <div class="quote-attr">Jeremy Allaire, CEO of Circle, February 2026</div>
+    </div>
+
+    <div class="section-eyebrow reveal" style="margin-top:64px">Sectors Transformed</div>
+    <div class="sector-grid reveal">
+      <div class="sector-card">
+        <div class="sector-icon">🏦</div>
+        <div class="sector-name">Finance & Banking</div>
+        <div class="sector-stat">$250B disrupted</div>
+        <div class="source">VGS Forecast</div>
+      </div>
+      <div class="sector-card">
+        <div class="sector-icon">🛒</div>
+        <div class="sector-name">Retail & E-Commerce</div>
+        <div class="sector-stat">$1T orchestrated (US)</div>
+        <div class="source">McKinsey</div>
+      </div>
+      <div class="sector-card">
+        <div class="sector-icon">🚚</div>
+        <div class="sector-name">Supply Chain</div>
+        <div class="sector-stat">90% cost reduction</div>
+        <div class="source">MarketsandMarkets</div>
+      </div>
+      <div class="sector-card">
+        <div class="sector-icon">⚕️</div>
+        <div class="sector-name">Healthcare & Life Sci</div>
+        <div class="sector-stat">Fastest adoption</div>
+        <div class="source">Fortune Business Insights</div>
+      </div>
+      <div class="sector-card">
+        <div class="sector-icon">📋</div>
+        <div class="sector-name">Insurance</div>
+        <div class="sector-stat">Claims in seconds</div>
+        <div class="source">AWS x402 Report</div>
+      </div>
+      <div class="sector-card">
+        <div class="sector-icon">⛓️</div>
+        <div class="sector-name">DeFi & Stablecoins</div>
+        <div class="sector-stat">$56T volume by 2030</div>
+        <div class="source">Circle</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ THE TRUST GAP ═══════ -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">The Problem</div>
+      <div class="section-title">Trust Is the Critical Bottleneck</div>
+      <p class="section-sub">The infrastructure for agents to transact is racing ahead. The infrastructure for agents to trust each other is missing entirely. This is the gap Agentra closes.</p>
+    </div>
+
+    <div class="gap-visual reveal">
+      <div class="gap-side" style="background:rgba(27,158,140,0.06);border:1px solid rgba(27,158,140,0.15);border-radius:12px">
+        <div class="num" style="color:var(--teal-bright)">$5T</div>
+        <div class="label">Projected agent-mediated<br/>commerce by 2030</div>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-side" style="background:rgba(232,85,61,0.06);border:1px solid rgba(232,85,61,0.15);border-radius:12px">
+        <div class="num" style="color:var(--coral)">$131B</div>
+        <div class="label">Projected e-commerce<br/>fraud by 2030</div>
+      </div>
+    </div>
+
+    <div class="big-cards">
+      <div class="big-card reveal">
+        <div class="num" style="color:var(--coral)">29%</div>
+        <div class="label">of consumers trust AI for payments<br/><span class="source">UK Consumer Survey</span></div>
+      </div>
+      <div class="big-card reveal" style="transition-delay:0.1s">
+        <div class="num" style="color:var(--gold)">11%</div>
+        <div class="label">of enterprises actively testing agentic AI<br/><span class="source">PYMNTS CAIO Report, 2025</span></div>
+      </div>
+      <div class="big-card reveal" style="transition-delay:0.2s">
+        <div class="num" style="color:var(--cream)">$14B</div>
+        <div class="label">Global non-compliance costs<br/><span class="source">Industry Data, 2023</span></div>
+      </div>
+    </div>
+
+    <div class="quote-block reveal">
+      <div class="quote-text">"AI plays on both sides of creating trust and destroying trust."</div>
+      <div class="quote-attr">Karen Webster, CEO of PYMNTS, 2025</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ THE RACE ═══════ -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">Industry Momentum</div>
+      <div class="section-title">Everyone Is Building the Rails.<br/>Nobody Is Building the Trust.</div>
+      <p class="section-sub">In 2025, every major payment network launched agent-specific infrastructure. The race to be the plumbing for autonomous commerce is well underway.</p>
+    </div>
+
+    <div class="timeline reveal">
+      <div class="tl-item active">
+        <div class="tl-date">APR 2025</div>
+        <div class="tl-title">Mastercard launches Agent Pay</div>
+        <div class="tl-desc">First on-network agentic transaction processed. Rolled out to all US cardholders by Nov 2025.</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">SEP 2025</div>
+        <div class="tl-title">Google ships AP2 Protocol</div>
+        <div class="tl-desc">60+ partners including PayPal, Coinbase, Mastercard, Adobe. Open protocol for agent transaction authentication.</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">SEP 2025</div>
+        <div class="tl-title">Stripe + OpenAI launch Agentic Commerce Protocol</div>
+        <div class="tl-desc">Powers ChatGPT Instant Checkout. Co-developed for autonomous purchase flows.</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">OCT 2025</div>
+        <div class="tl-title">Visa ships Intelligent Commerce</div>
+        <div class="tl-desc">AI-Ready Cards and Payment Instructions on VisaNet. 100+ partners in sandbox.</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">DEC 2025</div>
+        <div class="tl-title">PayPal launches Agentic Commerce</div>
+        <div class="tl-desc">Built on PayPal's trust infrastructure for AI-driven shopping experiences.</div>
+      </div>
+      <div class="tl-item" style="opacity:0.5">
+        <div class="tl-date">MAR 2026</div>
+        <div class="tl-title">Mastercard + Santander complete Europe's first live agent payment</div>
+        <div class="tl-desc">End-to-end AI agent transaction within a regulated banking framework.</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap reveal" style="text-align:center;padding:40px">
+      <div class="chart-label">The Missing Layer</div>
+      <div style="margin:32px auto;max-width:700px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:100px;text-align:right;font-size:11px;color:var(--cream-dim);flex-shrink:0">Payment Rails</span>
+          <div style="flex:1;height:28px;border-radius:6px;background:linear-gradient(90deg,var(--teal),var(--teal-bright));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--navy-deep)">Visa · Mastercard · Stripe · Google · PayPal</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:100px;text-align:right;font-size:11px;color:var(--cream-dim);flex-shrink:0">Agent Identity</span>
+          <div style="flex:1;height:28px;border-radius:6px;background:linear-gradient(90deg,rgba(232,185,61,0.3),rgba(232,185,61,0.1));border:1px dashed var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--gold)">Emerging: ERC-8004 · W3C DIDs · Vouched</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:100px;text-align:right;font-size:11px;color:var(--coral);font-weight:600;flex-shrink:0">Trust Layer</span>
+          <div style="flex:1;height:36px;border-radius:8px;background:linear-gradient(90deg,rgba(232,85,61,0.15),rgba(27,158,140,0.15));border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:13px;font-weight:700;color:var(--cream);gap:6px;animation:glowPulse 3s ease-in-out infinite">◈ Agentra™</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--cream-dim);font-weight:300;margin-top:16px;line-height:1.6">Bidirectional trust verification for every agent transaction.<br/>The only platform that scores both the sender <em>and</em> the counterparty.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ CTA ═══════ -->
+<section class="cta-section">
+  <div class="container reveal">
+    <div class="section-eyebrow">Explore the Network</div>
+    <div class="section-title" style="text-align:center;margin-bottom:24px">Watch It In Action</div>
+    <p style="text-align:center;color:var(--cream-dim);font-weight:300;font-size:16px;margin-bottom:40px;line-height:1.6">See agents build trust, transact, and self-police in real time<br/>in the Agentra Trust Network Simulator.</p>
+    <div style="text-align:center">
+      <a href="./ecosystem/" class="cta-btn">Launch Simulator →</a>
+    </div>
+    <div style="text-align:center;margin-top:48px;opacity:0.4">
+      <a href="https://agentrapay.ai" style="color:var(--cream-dim);text-decoration:none;font-size:11px;letter-spacing:0.1em">agentrapay.ai →</a>
+    </div>
+  </div>
+</section>
+
+<footer>PATENT PENDING · agentrapay.ai</footer>
+
+<script>
+// Stars
+for(let i=0;i<50;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;width:'+(0.5+Math.random()*1.5)+'px;height:'+(0.5+Math.random()*1.5)+'px;--d:'+(3+Math.random()*5)+'s;--delay:'+(Math.random()*5)+'s';
+  document.body.appendChild(s);
+}
+
+// Scroll reveal
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      en.target.classList.add('visible');
+      // Animate bars
+      en.target.querySelectorAll('.bar-fill').forEach((b,i)=>{
+        setTimeout(()=>b.classList.add('animated'),i*150);
+      });
+    }
+  });
+},{threshold:0.15});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.observe(el));
+
+// Count-up animation for hero stats
+function animateCount(el,target,prefix,suffix,duration){
+  const start=performance.now();
+  function tick(now){
+    const t=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-t,3);
+    const val=Math.round(ease*target);
+    el.textContent=prefix+val+suffix;
+    if(t<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const heroObs=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      const nums=en.target.querySelectorAll('[data-count]');
+      nums.forEach(n=>{
+        const val=parseInt(n.dataset.count);
+        const txt=n.textContent;
+        const prefix=txt.startsWith('$')?'$':'';
+        const suffix=txt.endsWith('%')?'%':'B';
+        const full=prefix?prefix:'';
+        animateCount(n,val,full,suffix==='%'?'%':'B',2000);
+      });
+      heroObs.disconnect();
+    }
+  });
+},{threshold:0.3});
+heroObs.observe(document.querySelector('.hero'));
+</script>
+</body>
+</html>
